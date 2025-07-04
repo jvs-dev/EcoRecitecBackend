@@ -1,34 +1,28 @@
-# 🌱 Desafio Full-Stack Eco Recitec: Aplicação de Economia Circular
+# Desafio Full-Stack Eco Recitec: Aplicação de Economia Circular
 
-Este projeto foi desenvolvido como parte do processo seletivo da empresa **Eco Recitec**, com o objetivo de demonstrar habilidades em desenvolvimento full-stack ao criar uma aplicação completa e funcional, focada no tema **Economia Circular**.
+Este projeto é uma aplicação full-stack desenvolvida como parte do processo seletivo para a empresa **Eco Recitec**. O objetivo é demonstrar a capacidade de construir uma solução completa e funcional sobre o tema **Economia Circular**, desde o frontend interativo até o backend com persistência de dados e envio de e-mails.
 
 ---
 
 ## 🚀 Funcionalidades
 
-### 🏠 Página Principal (Home)
+### Página Principal (Home)
 
 - Introdução ao conceito de Economia Circular
-- Elementos visuais explicativos (Reduzir, Reutilizar, Reciclar)
-- Carrossel vertical com **Swiper.js**
-- Formulário de contato com feedback visual
+- Ilustrações dos princípios: **Reduzir, Reutilizar, Reciclar**
+- **Carrossel vertical de imagens** com Swiper.js
+- **Formulário de contato** com validação básica e feedback visual
 
-### 📝 Formulário de Contato
+### Backend (API RESTful)
 
-- Campos: **Nome**, **E-mail**, **Mensagem**
-- Validação de campos obrigatórios e e-mail
-- Envio para o backend com resposta de sucesso/erro
+- Endpoint `POST /api/submissions`: recebe, salva e envia e-mail com os dados do formulário
+- Endpoint `GET /api/submissions`: retorna todas as submissões
+- Envio de e-mails com **Nodemailer + Brevo**
+- Armazenamento em banco **PostgreSQL**
 
-### 🔧 Backend (API)
+### Página de Dados (Tabela)
 
-- **POST /api/submissions**: recebe e armazena dados no banco PostgreSQL
-- **GET /api/submissions**: retorna todos os dados cadastrados
-- Envio de e-mail com **Nodemailer + Brevo**
-
-### 📄 Página de Dados
-
-- Exibição de todas as submissões em uma tabela
-- Tabela responsiva com colunas: Nome, E-mail, Mensagem, Data
+- Tabela responsiva exibindo: Nome, E-mail, Mensagem e Data de Cadastro
 
 ---
 
@@ -36,27 +30,22 @@ Este projeto foi desenvolvido como parte do processo seletivo da empresa **Eco R
 
 ### Frontend
 
-- **React**
-- **Vite.js**
+- **React** + **Vite.js**
 - **React Router DOM**
 - **Styled Components**
-- **Swiper.js**
-- **Fetch API**
-- **Google Fonts** (Inter, Poppins)
-- **Ionicons** / **Bootstrap Icons**
+- **Swiper.js** (carrossel)
+- **Fetch API**, **Google Fonts**, **Ionicons**, **Bootstrap Icons**
 
 ### Backend
 
-- **Node.js + Express**
-- **PostgreSQL**
-- **pg** (driver)
+- **Node.js** + **Express**
+- **PostgreSQL** com o driver `pg`
 - **Nodemailer**
-- **dotenv**
-- **cors**
+- **dotenv**, **cors**
 
 ---
 
-## 📁 Estrutura do Projeto
+## 📂 Estrutura do Projeto
 
 ```
 eco-recitec-desafio/
@@ -72,10 +61,11 @@ eco-recitec-desafio/
 │   │   │   ├── styles/
 │   │   │   ├── DataPage.jsx
 │   │   │   └── HomePage.jsx
-│   │   ├── styles/GlobalStyles.js
+│   │   ├── styles/
 │   │   ├── App.jsx
 │   │   └── main.jsx
-│   ├── .env.*
+│   ├── .env.development
+│   ├── .env.production
 │   ├── package.json
 │   └── vite.config.js
 ├── backend/
@@ -96,58 +86,81 @@ eco-recitec-desafio/
 
 ### Pré-requisitos
 
-- Node.js 14+
+- Node.js
 - npm
 - PostgreSQL
-- Conta SMTP (ex: Brevo)
+- Conta na Brevo (Sendinblue) ou outro SMTP
 
-### 🔙 Backend
+### 1. Backend
 
 ```bash
 cd backend
 npm install
 ```
 
-Crie o `.env` com:
+Crie `.env` com:
 
 ```
-DATABASE_URL=postgresql://user:pass@localhost:5432/db
-SMTP_HOST=smtp-relay.brevo.com
-SMTP_PORT=587
-SMTP_USER=seu@email.com
-SMTP_PASS=sua_chave_smtp
-EMAIL_FROM=remetente@email.com
+DATABASE_URL="postgresql://usuario:senha@localhost:5432/nome_do_banco"
+SMTP_HOST="smtp-relay.brevo.com"
+SMTP_PORT="587"
+SMTP_USER="seu_email@dominio.com"
+SMTP_PASS="sua_chave_api"
+EMAIL_FROM="seu_email@dominio.com"
 ```
 
-Crie a tabela:
+Crie o banco e a tabela `submissions`:
 
 ```sql
 CREATE TABLE submissions (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  email VARCHAR(255) NOT NULL,
-  message TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    message TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
 Inicie o servidor:
 
 ```bash
-npm start  # ou npm run dev
+npm run dev
 ```
 
-### 🖥️ Frontend
+Acesse: http://localhost:3001
+
+---
+
+### 2. Frontend
 
 ```bash
 cd frontend
 npm install
+npm install swiper
 ```
 
-Crie o `.env.development`:
+Crie `.env.development`:
 
 ```
-VITE_API_URL=http://localhost:3001
+VITE_API_URL="http://localhost:3001"
+```
+
+Importe fontes e ícones em `public/index.html`:
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Poppins:wght@400;500;700;800&display=swap"
+/>
+<script
+  type="module"
+  src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+/>
 ```
 
 Inicie:
@@ -156,64 +169,92 @@ Inicie:
 npm run dev
 ```
 
+Acesse: http://localhost:5173
+
 ---
 
 ## ☁️ Deploy
 
-### Frontend
+### 🔹 Frontend (Vercel ou Netlify)
 
-- Use **Vercel** ou **Netlify**
-- Configurar:
-  - build command: `npm run build`
-  - publish directory: `dist`
-  - `VITE_API_URL` apontando para o backend
+- `build command`: `npm run build`
+- `publish directory`: `dist`
+- Variável `VITE_API_URL`: https://ecorecitecbackend.onrender.com
 
-### Backend
+### 🔹 Backend (Render)
 
-- Use **Render**
-- Configure:
-  - build command: `npm install`
-  - start command: `node src/server.js`
-  - Variáveis de ambiente (seguras, não no código)
-  - PostgreSQL externo (ex: ElephantSQL ou DBeaver)
+- Conecte o repositório (pasta `backend`)
+- `build command`: `npm install`
+- `start command`: `node src/server.js`
+- Configure variáveis de ambiente
 
 ---
 
-## 📌 Versionamento
+## 📚 API - Documentação
 
-O projeto está versionado no GitHub:
-FrontEnd: **🔗 https://github.com/jvs-dev/EcoRecitecFront**
-BackEnd: **🔗 https://github.com/jvs-dev/EcoRecitecBackend**
+### POST `/api/submissions`
+
+#### Corpo:
+
+```json
+{
+  "name": "João Silva",
+  "email": "joao@email.com",
+  "message": "Mensagem aqui"
+}
+```
+
+#### Respostas:
+
+- `201`: Sucesso
+- `400`: Campos obrigatórios
+- `500`: Erro interno
 
 ---
 
-## ✅ Critérios de Avaliação
+### GET `/api/submissions`
 
-### Funcionalidade
+#### Resposta:
 
-- Fluxo completo: formulário → e-mail → banco de dados → exibição
+```json
+[
+  {
+    "id": 1,
+    "name": "Maria",
+    "email": "maria@example.com",
+    "message": "Interessada em parcerias.",
+    "created_at": "2025-07-04T12:05:30.000Z"
+  }
+]
+```
 
-### Código
+---
 
-- Modularização, clean code, tratamento de erros
-- Uso de variáveis de ambiente seguras
-- Styled-components para organização visual
+## ✅ Critérios Atendidos
 
-### UX/UI
+- Funcionalidade completa do fluxo: formulário → banco → e-mail → exibição
+- UI/UX responsiva e temática
+- Código modular, limpo e com boas práticas
+- Deploy funcional (pronto para Render + Vercel/Netlify)
+- Validações e tratamento de erros
+- Documentação clara neste `README.md`
 
-- Layout responsivo
-- Feedback visual com MessageBox
-- Ícones e carrossel para experiência aprimorada
+---
 
-### Documentação
+## 🔄 Versionamento
 
-- README detalhado
-- Instruções completas para rodar e publicar
+Todo o projeto está versionado e disponível no GitHub:
+
+🔗 **Repositórios**:\
+Repositório FrontEnd: *https://github.com/jvs-dev/EcoRecitecFront*\
+Repositório BackEnd: *https://github.com/jvs-dev/EcoRecitecBackend*
 
 ---
 
 ## 📧 Contato
 
-**Nome:** João Vitor Santana da Silva\
-**E-mail:** [jvssilv4@gmail.com](mailto:jvssilv4@gmail.com)\
-**LinkedIn:** https://linkedin.com/in/joão-vitor-dev
+**Seu Nome:** João Vitor Santana da Silva  
+**E-mail:** jvssilv4@gmail.com  
+**LinkedIn:** [https://linkedin.com/in/joão-vitor-dev](https://linkedin.com/in/joão-vitor-dev)
+
+---
