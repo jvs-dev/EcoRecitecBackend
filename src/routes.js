@@ -1,19 +1,16 @@
-// src/routes.js
 const express = require('express');
-const { Pool } = require('pg'); // Usaremos a Pool do PostgreSQL
+const { Pool } = require('pg');
 const nodemailer = require('nodemailer');
 
 const router = express.Router();
 
-// Configuração do Banco de Dados (PostgreSQL)
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false // Necessário para conexões em plataformas como Render/Heroku
+    rejectUnauthorized: false 
   }
 });
 
-// Configuração do Nodemailer
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: process.env.SMTP_PORT,
@@ -23,7 +20,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Endpoint: Receber dados do formulário (POST)
 router.post('/submissions', async (req, res) => {
   const { name, email, message } = req.body;
 
@@ -32,17 +28,15 @@ router.post('/submissions', async (req, res) => {
   }
 
   try {
-    // 1. Armazenar no banco de dados
     const result = await pool.query(
       'INSERT INTO submissions (name, email, message) VALUES ($1, $2, $3) RETURNING *',
       [name, email, message]
     );
     console.log('Dados salvos:', result.rows[0]);
 
-    // 2. Enviar e-mail
     await transporter.sendMail({
       from: `"Eco Recitec App" <${process.env.EMAIL_FROM}>`,
-      to: 'email_da_empresa@ecorecitec.com', // E-mail que receberá a notificação
+      to: 'jvssilv4@gmail.com', 
       subject: 'Novo Contato do Formulário de Economia Circular',
       html: `
         <h3>Nova Submissão Recebida</h3>
